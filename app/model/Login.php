@@ -2,14 +2,16 @@
 namespace app\model;
 
 
-class Login extends Database {
-	public function __construct()  {
-    parent::__construct() ;
+class Login {
+
+  private Database $database ;
+	 function __construct() {
+    $this->database = new Database() ;
 	}
 
 	public function register($user,$pass) : bool {
     $user = strtolower($user) ;
-    $result = parent::fetchFromDatabase(
+    $result = $this->database->fetchFromDatabase(
       "SELECT * FROM csc350.users"
     ) ;
     foreach ($result as $row) {
@@ -18,7 +20,7 @@ class Login extends Database {
       }
     }
     $preparedValues = [$user, $pass] ;
-    $result = parent::queryDatabase(
+    $result = $this->database->queryDatabase(
       "INSERT INTO csc350.users (username, password)
               VALUES (?, ?)" , $preparedValues
     );
@@ -31,7 +33,7 @@ class Login extends Database {
 
 	public function login($user, $pass) : bool {
     $user = strtolower($user) ;
-    $result = parent::fetchFromDatabase(
+    $result = $this->database->fetchFromDatabase(
       "SELECT * FROM csc350.users"
     ) ;
     foreach ($result as $row) {
@@ -45,7 +47,7 @@ class Login extends Database {
 	}
   function getCustomerId($username): ?string {
     $username = strtolower($username);
-    $result = parent::fetchFromDatabase(
+    $result = $this->database->fetchFromDatabase(
       "SELECT customerId FROM csc350.users WHERE username = ?",
       [$username]
     );
@@ -61,7 +63,7 @@ class Login extends Database {
     return null;
   }
   function getUsername($customerId) : ?string {
-    $result = parent::fetchFromDatabase(
+    $result = $this->database->fetchFromDatabase(
       "SELECT username FROM csc350.users WHERE customerId = ?" ,
       [$customerId]
     ) ;
@@ -77,7 +79,7 @@ class Login extends Database {
     return null;
   }
   function getPassword($customerId) : ?string {
-    $result = parent::fetchFromDatabase(
+    $result = $this->database->fetchFromDatabase(
       "SELECT password FROM csc350.users WHERE customerId = ?" ,
       [$customerId]
     ) ;
@@ -92,10 +94,10 @@ class Login extends Database {
     }
     return null;
   }
-  public function getRememberMeCred($customerId ) : ?array {
-    $result = parent::fetchFromDatabase(
-      "SELECT customerId, series, token FROM csc350.remembermesessions WHERE customerId = ?" ,
-      [$customerId]
+  public function getRememberMeCred($customerId, $series) : ?array {
+    $result = $this->database->fetchFromDatabase(
+      "SELECT customerId, series, token FROM csc350.remembermesessions WHERE customerId = ? AND series = ?" ,
+      [$customerId, $series]
     );
     if(!empty($result)) {
       return $result ;
@@ -103,20 +105,20 @@ class Login extends Database {
     return null ;
   }
   public function insertRememberMe($customerId, $series,$token) : void {
-    parent::queryDatabase(
+    $this->database->queryDatabase(
       "INSERT INTO csc350.rememberMeSessions (customerId, series, token)
                VALUE(?, ? , ?)" ,
       [$customerId, $series, $token]
     ) ;
   }
   public function insertNewTokenRemMe($customerId, $series, $token) : void {
-    parent::queryDatabase(
+    $this->database->queryDatabase(
       "UPDATE csc350.rememberMeSessions SET token = ? WHERE customerId = ? AND series = ?" ,
       [$token, $customerId, $series]
     ) ;
   }
   public function removeRememberMe($customerId, $series) : void {
-    parent::queryDatabase(
+    $this->database->queryDatabase(
       "DELETE FROM csc350.remembermesessions WHERE customerId = ? AND series = ?" ,
       [$customerId, $series]
     ) ;

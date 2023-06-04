@@ -29,9 +29,6 @@ class Database {
       return $conn ;
     }
   }
-  private function disconnectFromDatabase(mysqli $conn): void {
-    $conn->close();
-  }
   public function createDatabase($sqlScript, $routeTo = 'index.php?choice=login'): void {
     $conn = $this->connectToDatabase(true);
 
@@ -42,7 +39,7 @@ class Database {
       $scriptPath = __DIR__ . $sqlScript;
       $script = file_get_contents($scriptPath);
       if ($conn->multi_query($script)) {
-        $this->disconnectFromDatabase($conn);
+        $conn->close();
         ob_start();
         header("Location: $routeTo");
         ob_end_flush();
@@ -51,7 +48,7 @@ class Database {
         echo 'Error executing script: ' . $conn->error;
       }
     } else {
-      $this->disconnectFromDatabase($conn);
+      $conn->close();
     }
   }
   public function queryDatabase($sqlQuery, $values = []) : bool {

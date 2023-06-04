@@ -25,7 +25,7 @@ class Router {
 
       case 'logon':
         //TODO: Switch to ajax for error message so page doesn't need to reload
-        $loginController = new AuthenticationController() ;;
+        $loginController = new AuthenticationController() ;
         $loginController->login() ;
         break;
 
