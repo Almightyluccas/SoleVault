@@ -5,7 +5,7 @@ namespace app\core ;
 use app\controller\AboutController;
 use app\controller\CartController;
 use app\controller\ContactController;
-use app\controller\LoginController;
+use app\controller\AuthenticationController;
 use app\controller\ProductsController;
 use app\library\LibraryLG;
 
@@ -14,17 +14,19 @@ class Router {
     $choice = LibraryLG::getValue('choice') ;
 
     switch ($choice) {
+
       case null:
 
       case 'login':
-//        TODO: Switch to ajax for error message so page doesn't need to reload
-      $loginController = new LoginController();
-      $loginController->logon() ;
+        $loginController = new AuthenticationController();
+        $loginController->checkRememberMe() ;
+        $loginController->firstVisit() ;
         break ;
 
       case 'logon':
-        $loginController = new LoginController();
-        $loginController->login();
+        //TODO: Switch to ajax for error message so page doesn't need to reload
+        $loginController = new AuthenticationController() ;;
+        $loginController->login() ;
         break;
 
       case 'products':
@@ -63,22 +65,22 @@ class Router {
         break ;
 
       case 'registration':
-        $loginControl = new LoginController() ;
+        $loginControl = new AuthenticationController() ;
         $loginControl->register() ;
         break ;
 
       case 'register':
-        $loginControl = new LoginController() ;
+        $loginControl = new AuthenticationController() ;
         $loginControl->register(true) ;
         break ;
 
       case 'logoff':
-        $loginControl = new LoginController() ;
+        $loginControl = new AuthenticationController() ;
         $loginControl->logOff() ;
         break ;
 
       case 'logoff2':
-        $loginControl = new LoginController() ;
+        $loginControl = new AuthenticationController() ;
         $loginControl->logOff(true) ;
         break ;
     }

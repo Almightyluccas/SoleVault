@@ -49,7 +49,7 @@
           <div class="divider  align-items-center my-2">
             <p class="text-center fw-bold mx-3 mb-0 text-muted">OR</p>
           </div>
-          <a class="btn btn-primary btn-lg btn-block" style="background-color: #3b5998" href="index.php?choice=login"
+          <a class="btn btn-primary btn-lg btn-block" style="background-color: #3b5998" href="index.php?choice=logon"
              role="button">
             <span>Back to login</span>
           </a>

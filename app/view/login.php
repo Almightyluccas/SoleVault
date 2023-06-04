@@ -12,15 +12,12 @@
 
 
 </head>
-<body class="pt-5">
+<body >
+  <?php  include 'menu.php'
 
-  <div class="container-fluid ">
-    <div class="row">
-      <div class="col-lg-12 text-center" >
-        <h2 class="display-3">Sole Vault: Unleash the Power of Your Soles</h2>
-      </div>
-    </div>
-  </div>
+  ?>
+
+
 
   <div class="container-fluid " style="padding-top: 15vh">
     <div class="container py-5 h-100">
@@ -30,7 +27,9 @@
                class="img-fluid" alt="Phone image">
         </div>
         <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
-
+          <div class="container text-center pb-4">
+            <span class="h2">Welcome!</span>
+          </div>
           <form action='index.php' method='get'>
             <input type='hidden' name='choice' value='logon'/>
             <div class="form-outline mb-4">
@@ -42,12 +41,12 @@
               <label class="form-label contact" for="password">Password</label>
               <?php
               if(isset($_GET['messsage'])) echo "<div class='' style='color:red;width:500px'>".$_GET['message']."</div>";
-              if(isset($message)) echo "<div style='color:red;width:500px; font-size: 20px'>".$message."</div>";
+              if(isset($message)) echo "<div style='color:red;width:500px; '>".$message."</div>";
               ?>
             </div>
             <div class="d-flex justify-content-around align-items-center mb-4">
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="form1Example3" checked />
+                <input class="form-check-input" type="checkbox" value="" name="rememberMe" checked />
                 <label class="form-check-label" for="form1Example3"> Remember me </label>
               </div>
               <a href="#!">Forgot password?</a>
@@ -66,6 +65,14 @@
       </div>
     </div>
   </div>
+
+<?php
+
+
+
+
+
+?>
 
 
 

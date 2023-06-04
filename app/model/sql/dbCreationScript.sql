@@ -4,9 +4,16 @@ CREATE DATABASE csc350;
 USE csc350;
 
 CREATE TABLE users (
-  customerId INT PRIMARY KEY AUTO_INCREMENT,
-  username   VARCHAR(50) NOT NULL,
+  customerId INT AUTO_INCREMENT PRIMARY KEY,
+  username   VARCHAR(50) NOT NULL ,
   password   VARCHAR(20) NOT NULL
+);
+CREATE TABLE rememberMeSessions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  customerId INT NOT NULL ,
+  series VARCHAR(255) NOT NULL ,
+  token VARCHAR(255) NOT NULL ,
+  FOREIGN KEY (customerId) REFERENCES users (customerId)
 );
 
 CREATE TABLE products (
@@ -18,7 +25,7 @@ CREATE TABLE products (
 );
 
 CREATE TABLE cart (
-  cartId     INT PRIMARY KEY AUTO_INCREMENT,
+  cartId     INT AUTO_INCREMENT PRIMARY KEY,
   customerId INT            NOT NULL,
   productId  INT            NOT NULL,
   quantity   INT(11)        NOT NULL,
@@ -31,7 +38,7 @@ CREATE TABLE cart (
 
 
 CREATE TABLE purchase (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     customerId INT NOT NULL,
     productId INT NOT NULL,
     totalPrice decimal(13,2) NOT NULL,
@@ -40,7 +47,7 @@ CREATE TABLE purchase (
 
 
 CREATE TABLE discountCodes (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name varchar (10) NOT NULL ,
     value decimal (3,2) NOT NULL # percentage of discount would be stored in value as a decimal
 ) ;

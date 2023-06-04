@@ -54,34 +54,62 @@ class Database {
       $this->disconnectFromDatabase($conn);
     }
   }
-  public function queryDatabase($sqlQuery) : bool {
-    $conn = $this->connectToDatabase() ;
-    if(true) {
-      return true ;
+  public function queryDatabase($sqlQuery, $values = []) : bool {
+    $conn = $this->connectToDatabase();
+    $stmt = $conn->prepare($sqlQuery);
+    if ($stmt) {
+      if (!empty($values)) {
+        $stmt->bind_param(str_repeat('s', count($values)), ...$values);
+      }
+      $stmt->execute();
+      $stmt->close();
+      $conn->close();
+      return true;
     } else {
-      return false ;
+      $conn->close();
+      return false;
     }
   }
-  public function multiQueryDatabase(...$sqlQueries) : bool {
-    $conn = $this->connectToDatabase() ;
-    foreach ($sqlQueries as $sqlQuery) {
-
+  public function multiQueryDatabase(array $queries): bool {
+    $conn = $this->connectToDatabase();
+    $success = true;
+    foreach ($queries as $sqlQuery => $values) {
+      $stmt = $conn->prepare($sqlQuery);
+      if ($stmt) {
+        if (!empty($values)) {
+          $stmt->bind_param(str_repeat('s', count($values)), ...$values);
+        }
+        $stmt->execute();
+        if ($stmt->errno) {
+          $success = false;
+        }
+        $stmt->close();
+      } else {
+        $success = false;
+      }
     }
-    if(true) { //if query went through return true else return false
-      return true ;
-    }else {
-      return false ;
+    $conn->close();
+    return $success;
+  }
+  public function fetchFromDatabase($sqlQuery, $values = []): array {
+    $arr = [];
+    $conn = $this->connectToDatabase();
+
+    $stmt = $conn->prepare($sqlQuery);
+    if ($stmt) {
+      if (!empty($values)) {
+        $stmt->bind_param(str_repeat('s', count($values)), ...$values);
+      }
+      $stmt->execute();
+      $result = $stmt->get_result();
+      if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+          $arr[] = $row;
+        }
+      }
+      $stmt->close();
     }
+    $conn->close();
+    return $arr;
   }
-  public function fetchFromDatabase($sqlQuery) : array {
-    $arr = [true] ;
-    $conn = $this->connectToDatabase() ;
-
-    return $arr ;
-  }
-
-
-
-
-
 }

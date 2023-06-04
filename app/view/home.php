@@ -1,6 +1,8 @@
 <?php
 \app\library\LibraryLG::sessionValidator() ;?>
 
+
+
 <!DOCTYPE html>
 <html>
 <meta charset="utf-8" />
@@ -88,7 +90,6 @@
     <?php include('menu.php'); ?>
 
 
-
 <br>
 <h1><center>JORDAN 4 COLLECTION</center></h1><br>
 <p id="sale"> STUDENTS SALE 10% OFF </p><br>
@@ -96,6 +97,8 @@
 <br>
 <div id="gat">
   <h2>Jordan 4 Retro Thunder</h2><br>
+
+
   <p id="price"> $150.00 </p><br>
   <input type="button" id="button" class="btn buttonCart" data-productId="11"
          value="Add to cart">
