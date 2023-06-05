@@ -11,7 +11,7 @@
 
 
 <?php include 'classes/scriptLoader.php' ?>
-<script src="Javascript/homeAjax.js" defer> </script>
+<script src="Javascript/ajax/homeAjax.js" defer> </script>
 <title>GoShop: Home</title>
 <style type="text/css">
 

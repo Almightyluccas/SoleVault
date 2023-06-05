@@ -4,10 +4,15 @@ namespace app\controller;
 
 use app\library\LibraryLG;
 use app\model\Database;
-use app\model\Login;
+use app\model\Authentication;
 use Exception;
 
 class AuthenticationController {
+
+  private Authentication $auth ;
+  public function __construct() {
+    $this->auth = new Authentication() ;
+  }
 
   private function successfulAuth($username, $customerId, $series = null) : void {
     session_start() ;
@@ -22,41 +27,44 @@ class AuthenticationController {
     $_SESSION['LAST_ACTIVITY'] = time() ;
     header("Location: index.php?choice=home") ;
   }
-  private function destroyAuth($customerId, $series) : void {
-    $login = new Login() ;
-    $login->removeRememberMe($customerId ,$series) ;
+
+  private function destroyAuth($customerId, $series = null) : void {
     session_unset() ;
     session_destroy() ;
     setcookie(session_name(), "", time() - 1, "/") ;
     setcookie('auth-rem', "" , time()-1, "/" ) ;
-    header("Location: index.php?choice=logon") ;
-  }
+    if($series !== null) {
+      $this->auth->removeRememberMe($customerId ,$series) ;
+      header("Location: index.php") ;
+    } else {
+      $this->auth->removeAllRememberMe($customerId);
 
+    }
+  }
   private function setRememberMe($customerId) : void {
     if(isset($_GET['rememberMe'])) {
       try {
-        $login = new Login() ;
         $series = bin2hex(random_bytes(25)) ;
         $token = bin2hex(random_bytes(25)) ;
         $this->setRememberMeCookie($customerId, $series, $token);
-        $login->insertRememberMe($customerId, $series, $token) ;
+        $this->auth->insertRememberMe($customerId, $series, $token) ;
       } catch (Exception $e) {
         echo $e ;
       }
     }
   }
+
   private function setRememberMeCookie($customerId, $seriesHex, $tokenHex) : void {
-    $cookieValue = $customerId . '|' . $seriesHex . '|' . $tokenHex;
+    $cookieValue = $customerId . '|' . $seriesHex . '|' . $tokenHex ;
     setcookie('auth-rem', $cookieValue, time() + (7 * 24 * 60 * 60), '/') ;
   }
 
   private function updateRememberMe($customerId , $series) : void {
     if(isset($_GET['rememberMe'])) {
       try {
-        $login = new Login() ;
         $token = bin2hex(random_bytes(25)) ;
         $this->setRememberMeCookie($customerId, $series, $token);
-        $login->insertNewTokenRemMe($customerId, $series, $token);
+        $this->auth->insertNewTokenRemMe($customerId, $series, $token);
       } catch (Exception $e) {
         echo $e->getMessage() ;
       }
@@ -64,64 +72,66 @@ class AuthenticationController {
   }
 
   private function validateRememberMeCookie($cookieArr) : void {
-    try{
-      $login = new Login() ;
       $customerIdCookie = intval($cookieArr[0]) ;
       $seriesBin = $cookieArr[1] ;
       $tokenBin = $cookieArr[2] ;
-      $result = $login->getRememberMeCred($customerIdCookie, $seriesBin) ;
-      if(!empty($result)) {
-        if ($customerIdCookie === $result[0]['customerId'] && $seriesBin === $result[0]['series']
-          && $tokenBin === $result[0]['token']) {
-          $this->successfulAuth(
-            $login->getUsername($customerIdCookie), $customerIdCookie, $seriesBin
-          );
-        } else {
-          throw new Exception('not equal')  ;
-        }
-      } else {
-        throw new Exception('null value returned') ;
+      $result = $this->auth->getRememberMeCred($customerIdCookie, $seriesBin) ;
+      $validateCallback = fn($result) => (
+        !empty($result) &&
+        $customerIdCookie === $result[0]['customerId'] &&
+        $seriesBin === $result[0]['series'] &&
+        $tokenBin === $result[0]['token']
+      );
+      if ($validateCallback($result)) {
+        $this->successfulAuth(
+          $this->auth->getUsername($customerIdCookie),
+          $customerIdCookie,
+          $seriesBin
+        );
+      }else {
+        $this->destroyAuth($customerIdCookie);
+        header("Location: index.php?choice=login&authBreach=1") ;
       }
-    }catch (Exception $e) {
-      echo $e->getMessage() ;
-    }
   }
 
   public function checkRememberMe() : void {
     if (isset($_COOKIE['auth-rem'])) {
       $rememberMeCookie = explode('|',  $_COOKIE['auth-rem']) ;
+
       $this->validateRememberMeCookie($rememberMeCookie) ;
     }
   }
 
-  private function handleUserInput($username, $password) {
+  private function checkForUserInputError($username, $password) : string {
     $message = '' ;
-      if(trim($username) === '' && trim($password) === '') {
+
+      if((trim($username) === '' || trim($username) === null) &&(trim($password) === '' ||trim($password) === null)) {
         $message = 'Empty Username and Password' ;
-      } else if (trim($username) === '') {
+      } else if (trim($username) === '' || trim($username) === null) {
         $message = 'Empty Username' ;
-      } elseif (trim($password) === '') {
+      } elseif (trim($password) === '' || trim($password) === null) {
         $message = 'Empty Password' ;
       }
 
       if ($message !== '') {
         include(__DIR__ . '/../view/login.php') ;
+        return $message ;
       }
     return $message ;
   }
 
 
-  public function login() : string {
-    $message = '';
-    $username = strtolower(LibraryLG::getValue('username')) ;
+  public function handleLogin() : string {
+
+
+    $username = strtolower(LibraryLG::getValueString('username')) ;
     $password = LibraryLG::getValue('password') ;
-    $message = $this->handleUserInput($username, $password) ;
+    $message = $this->checkForUserInputError($username, $password) ;
     if ($message !== '') {
       return $message ;
     }
-    $login = new Login() ;
-    $customerId = $login->getCustomerId($username) ;
-    if ($login->login($username, $password)) {
+    if ($this->auth->login($username, $password)) {
+      $customerId = $this->auth->getCustomerId($username) ;
       $this->setRememberMe($customerId);
       $this->successfulAuth(
         $username, $customerId
@@ -133,35 +143,11 @@ class AuthenticationController {
       return $message ;
     }
   }
-
   public function firstVisit() : void {
     $database = new Database() ;
     $database->createDatabase('\sql\dbCreationScript.sql') ;
     include(__DIR__ . '/../view/login.php') ;
   }
-
-  public function register($performRegisterAction = false ) : void {
-    if ($performRegisterAction) {
-      $user = LibraryLG::getValue('username') ;
-      $pass = LibraryLG::getValue('password') ;
-      $passTwo = LibraryLG::getValue('password2') ;
-      if(trim($pass) === trim($passTwo)) {
-        $db = new Login() ;
-        if ($db->register($user, $pass)) {
-          header("Location: index.php") ;
-        } else {
-          $message = "ERROR: Userid Already In Use" ;
-          include(__DIR__ . '/../view/registration.php') ;
-        }
-      } else {
-        $message = "Error: Passwords don't match" ;
-        include(__DIR__ . '/../view/registration.php') ;
-      }
-    } else {
-      include(__DIR__ . '/../view/registration.php') ;
-    }
-  }
-
   public function logOff($fullyLogOff = false) : void {
     if ($fullyLogOff) {
       session_start() ;

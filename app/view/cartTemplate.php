@@ -9,7 +9,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <?php include 'classes/scriptLoader.php' ?>
 
-  <script src="Javascript/cartAjax.js" defer > </script>
+  <script src="Javascript/ajax/cartAjax.js" defer > </script>
   <style>
     #title {
       color: white;

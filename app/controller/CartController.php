@@ -28,8 +28,7 @@ class CartController {
 
       include('..\app\view\cartTemplate.php') ;
     } else {
-      $choice = 'login' ;
-      header("Location: index.php?message=Invalid-Login") ;
+      header("Location: index.php?message=Invalid-Authentication") ;
     }
   }
   public function thankYouCheckout() : void {

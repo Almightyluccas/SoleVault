@@ -7,8 +7,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=0.8, maximum-scale=1" />
 
-  <?php include 'classes/scriptLoader.php' ?>
+  <?php
+  if(isset($_GET['authBreach'])) {
+    echo'<script src="javascript/accountBreachError.js" defer></script>' ;
+  }
+  include 'classes/scriptLoader.php'
+
+  ?>
   <title>SoleVault: Login</title>
+
 
 
 </head>
@@ -16,7 +23,6 @@
   <?php  include 'menu.php'
 
   ?>
-
 
 
   <div class="container-fluid " style="padding-top: 15vh">

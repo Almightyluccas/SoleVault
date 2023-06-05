@@ -6,7 +6,9 @@ use app\controller\AboutController;
 use app\controller\CartController;
 use app\controller\ContactController;
 use app\controller\AuthenticationController;
+use app\controller\ErrorController;
 use app\controller\ProductsController;
+use app\controller\RegistrationController;
 use app\library\LibraryLG;
 
 class Router {
@@ -26,7 +28,7 @@ class Router {
       case 'logon':
         //TODO: Switch to ajax for error message so page doesn't need to reload
         $loginController = new AuthenticationController() ;
-        $loginController->login() ;
+        $loginController->handleLogin() ;
         break;
 
       case 'products':
@@ -65,12 +67,12 @@ class Router {
         break ;
 
       case 'registration':
-        $loginControl = new AuthenticationController() ;
+        $loginControl = new RegistrationController() ;
         $loginControl->register() ;
         break ;
 
       case 'register':
-        $loginControl = new AuthenticationController() ;
+        $loginControl = new RegistrationController() ;
         $loginControl->register(true) ;
         break ;
 
@@ -83,6 +85,9 @@ class Router {
         $loginControl = new AuthenticationController() ;
         $loginControl->logOff(true) ;
         break ;
+      case 'acctBreach' :
+        $errorControl = new ErrorController() ;
+        $errorControl->accountBreachErr() ;
     }
   }
 

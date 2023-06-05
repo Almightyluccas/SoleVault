@@ -12,7 +12,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
   <?php include 'classes/scriptLoader.php' ?>
-  <script src="Javascript/productAjax.js" defer> </script>
+  <script src="Javascript/ajax/productAjax.js" defer> </script>
   <title>Document</title>
   <style>
     #title {
