@@ -11,85 +11,49 @@ use app\controller\ProductsController;
 use app\controller\RegistrationController;
 use app\library\LibraryLG;
 
+
+
+
 class Router {
+  private array $routes = [
+    null => [AuthenticationController::class, 'checkRememberMe'],
+    'login' => [AuthenticationController::class, 'checkRememberMe'],
+    'logon' => [AuthenticationController::class, 'handleLogin'],
+    'products' => [ProductsController::class, 'productPage'],
+    'singleProduct' => [ProductsController::class, 'singlePage'],
+    'cart' => [CartController::class, 'cart'],
+    'home' => [ProductsController::class, 'homePage'],
+    'about' => [AboutController::class, 'about'],
+    'thankyou' => [CartController::class, 'thankYouCheckout'],
+    'contact' => [ContactController::class, 'contact', ],
+    'registration' => [RegistrationController::class, 'register' ],
+    'register' => [RegistrationController::class, 'register', true],
+    'logoff' => [AuthenticationController::class, 'logOff'],
+    'logoff2' => [AuthenticationController::class, 'logOff', true],
+    'acctBreach' => [ErrorController::class, 'accountBreachErr'],
+  ];
+
   public function handleRequest(): void {
-    $choice = LibraryLG::getValue('choice') ;
+    $choice = LibraryLG::getValue('choice');
 
-    switch ($choice) {
+    if (isset($this->routes[$choice])) {
+      $route = $this->routes[$choice];
+      $controllerClass = $route[0];
+      $method = $route[1];
+      $arguments = $route[2] ?? [];
+      $controller = new $controllerClass();
 
-      case null:
-
-      case 'login':
-        $loginController = new AuthenticationController();
-        $loginController->checkRememberMe() ;
-        $loginController->firstVisit() ;
-        break ;
-
-      case 'logon':
-        //TODO: Switch to ajax for error message so page doesn't need to reload
-        $loginController = new AuthenticationController() ;
-        $loginController->handleLogin() ;
-        break;
-
-      case 'products':
-        $prodControl = new ProductsController() ;
-        $prodControl->productPage() ;
-        break ;
-
-      case 'singleProduct':
-         $prodControl = new ProductsController() ;
-         $prodControl->singlePage() ;
-        break ;
-
-      case 'cart':
-        $cartControl = new CartController() ;
-        $cartControl->cart() ;
-        break ;
-
-      case 'home':
-        $prodControl = new ProductsController() ;
-        $prodControl->homePage() ;
-        break ;
-
-      case 'about':
-        $aboutControl = new AboutController() ;
-        $aboutControl->about() ;
-        break ;
-
-      case 'thankyou':
-        $cartControl = new CartController() ;
-        $cartControl->thankYouCheckout() ;
-        break ;
-
-      case 'contact':
-        $contactControl = new ContactController() ;
-        $contactControl->contact() ;
-        break ;
-
-      case 'registration':
-        $loginControl = new RegistrationController() ;
-        $loginControl->register() ;
-        break ;
-
-      case 'register':
-        $loginControl = new RegistrationController() ;
-        $loginControl->register(true) ;
-        break ;
-
-      case 'logoff':
-        $loginControl = new AuthenticationController() ;
-        $loginControl->logOff() ;
-        break ;
-
-      case 'logoff2':
-        $loginControl = new AuthenticationController() ;
-        $loginControl->logOff(true) ;
-        break ;
-      case 'acctBreach' :
-        $errorControl = new ErrorController() ;
-        $errorControl->accountBreachErr() ;
+      if (!empty($arguments)) {
+        $controller->$method($arguments);
+      } else {
+        $controller->$method();
+      }
+    } else {
+      $this->handleInvalidRoute();
     }
   }
-
-
+  private function handleInvalidRoute(): void {
+    $errorController = new ErrorController();
+    $errorController->show404Error();
+  }
 }

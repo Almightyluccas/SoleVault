@@ -6,7 +6,7 @@ use app\library\LibraryLG;
 use app\model\Authentication;
 
 class RegistrationController {
-  public function register($performRegisterAction = false ) : void {
+  public function register(bool $performRegisterAction = false ) : void {
     if ($performRegisterAction) {
       $user = LibraryLG::getValue('username') ;
       $pass = LibraryLG::getValue('password') ;

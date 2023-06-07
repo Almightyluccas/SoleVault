@@ -14,7 +14,7 @@ class AuthenticationController {
     $this->auth = new Authentication() ;
   }
 
-  private function successfulAuth($username, $customerId, $series = null) : void {
+  private function successfulAuth(string $username, int $customerId, ?string $series = null) : void {
     session_start() ;
     $_SESSION['username'] = $username ;
     $_SESSION['customerId'] = $customerId ;
@@ -28,7 +28,7 @@ class AuthenticationController {
     header("Location: index.php?choice=home") ;
   }
 
-  private function destroyAuth($customerId, $series = null) : void {
+  private function destroyAuth(int $customerId, ?string $series = null) : void {
     session_unset() ;
     session_destroy() ;
     setcookie(session_name(), "", time() - 1, "/") ;
@@ -41,7 +41,7 @@ class AuthenticationController {
 
     }
   }
-  private function setRememberMe($customerId) : void {
+  private function setRememberMe(int $customerId) : void {
     if(isset($_GET['rememberMe'])) {
       try {
         $series = bin2hex(random_bytes(25)) ;
@@ -54,12 +54,12 @@ class AuthenticationController {
     }
   }
 
-  private function setRememberMeCookie($customerId, $seriesHex, $tokenHex) : void {
+  private function setRememberMeCookie(int $customerId, string $seriesHex, string $tokenHex) : void {
     $cookieValue = $customerId . '|' . $seriesHex . '|' . $tokenHex ;
     setcookie('auth-rem', $cookieValue, time() + (7 * 24 * 60 * 60), '/') ;
   }
 
-  private function updateRememberMe($customerId , $series) : void {
+  private function updateRememberMe(int $customerId , string $series) : void {
     if(isset($_GET['rememberMe'])) {
       try {
         $token = bin2hex(random_bytes(25)) ;
@@ -71,7 +71,7 @@ class AuthenticationController {
     }
   }
 
-  private function validateRememberMeCookie($cookieArr) : void {
+  private function validateRememberMeCookie(array $cookieArr) : void {
       $customerIdCookie = intval($cookieArr[0]) ;
       $seriesBin = $cookieArr[1] ;
       $tokenBin = $cookieArr[2] ;
@@ -95,24 +95,22 @@ class AuthenticationController {
   }
 
   public function checkRememberMe() : void {
+    include(__DIR__ . '/../view/login.php') ;
     if (isset($_COOKIE['auth-rem'])) {
       $rememberMeCookie = explode('|',  $_COOKIE['auth-rem']) ;
-
       $this->validateRememberMeCookie($rememberMeCookie) ;
     }
   }
 
-  private function checkForUserInputError($username, $password) : string {
+  private function checkForUserInputError(string $username, string $password) : string {
     $message = '' ;
-
       if((trim($username) === '' || trim($username) === null) &&(trim($password) === '' ||trim($password) === null)) {
         $message = 'Empty Username and Password' ;
       } else if (trim($username) === '' || trim($username) === null) {
         $message = 'Empty Username' ;
       } elseif (trim($password) === '' || trim($password) === null) {
-        $message = 'Empty Password' ;
+        $message = 'Empty Password';
       }
-
       if ($message !== '') {
         include(__DIR__ . '/../view/login.php') ;
         return $message ;
@@ -122,7 +120,6 @@ class AuthenticationController {
 
 
   public function handleLogin() : string {
-
 
     $username = strtolower(LibraryLG::getValueString('username')) ;
     $password = LibraryLG::getValue('password') ;
@@ -143,12 +140,10 @@ class AuthenticationController {
       return $message ;
     }
   }
-  public function firstVisit() : void {
-    $database = new Database() ;
-    $database->createDatabase('\sql\dbCreationScript.sql') ;
-    include(__DIR__ . '/../view/login.php') ;
-  }
-  public function logOff($fullyLogOff = false) : void {
+
+
+
+  public function logOff(bool $fullyLogOff = false) : void {
     if ($fullyLogOff) {
       session_start() ;
       $rememberMeParts = explode('|', $_COOKIE['auth-rem']) ;

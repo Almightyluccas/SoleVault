@@ -4,8 +4,8 @@ namespace app\controller;
 
 class ErrorController {
 
-  public function accountBreachErr() : void {
-    include '..\app\view\error\accountBreachError.php' ;
+  public function show404Error() : void {
+    include '..\app\view\error\404Error.php' ;
   }
 
 }
