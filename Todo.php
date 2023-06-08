@@ -1,7 +1,12 @@
 <?php
 
 /*
- *TODO: add functionality to remember me for the login
+
+
+
+                                                         DONE
+----------------------------------------------------------------------------------------------------------------
+ *DONE- TODO: add functionality to remember me for the login
  *
  *  DONE -If the user successfully logs in with remember me checked create a login cookie
  *  DONE -the login cookie will contain the Username, and 2 random tokens using {  random_bytes(32);  } to generate
@@ -13,18 +18,37 @@
  *  DONE -If the username and series match but the token doesn't then a theft is assumed. Display a warning about the theft
  *    and delete all of the user's remembered sessions
  *  DONE -If the username and series is not present then ignore the cookie
- *
- *
- *
- *
- *TODO: implement hashing to sensitive information
+ *Done- TODO: implement hashing to sensitive information
  *   - possible password salt
  *   -don't allow spaces in passwords
  *
- *TODO: implement redis for data caching in memory
- *
- *
- *
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+                                                     In-Progress
+ ----------------------------------------------------------------------------------------------------------------
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+                                                        Remaining
+ ----------------------------------------------------------------------------------------------------------------
+ TODO: implement redis for data caching in memory
+
  *TODO: implement compiled routing
  *
  *
