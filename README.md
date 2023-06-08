@@ -10,8 +10,10 @@ SoleVault is a full-stack e-commerce website dedicated to the sale of shoes. The
 - View and modify the shopping cart.
 - Proceed to the checkout process.
 - Manage user accounts and login/logout functionality.
-- Secure payment processing.
 - Real-time updates to the UI with AJAX calls.
+- Remember Me functionality with token and series
+- Warning is displayed if token and series get stolen and used elsewhere upon visiting the site again
+- Proper password hashing for security  
 
 ## Installation
 
