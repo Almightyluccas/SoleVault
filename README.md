@@ -30,7 +30,7 @@ To run this project locally, follow these steps:
 
 ## Contributing
 
-Contributions are welcome! If you have any suggestions, bug reports, or feature requests, please open an issue on the GitHub repository. If you would like to contribute directly to the project, you can fork the repository, make your changes, and submit a pull request.
+Contributions are welcome! If you have any suggestions, bug reports, or feature requests, please open an issue on the GitHub repository. But this is only meant for me to learn PHP
 
 ## License
 
