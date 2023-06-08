@@ -2,7 +2,7 @@
 **WORK IN PROGRESS**
 (for learning purposes only)
 
-SoleVault is a full-stack e-commerce website dedicated to the sale of shoes. The project utilizes a vanilla PHP backend with the MVC architecture and leverages Apache as the web server. MySQL is employed for efficient database management. On the frontend, JavaScript, CSS, and Bootstrap are used to enhance the user interface and deliver an engaging experience. Additionally, AJAX calls are incorporated, for example in the Cart feature, allowing real-time updates to the UI without the need for page refreshes.
+SoleVault is a full-stack e-commerce website dedicated to the sale of shoes. The project utilizes a vanilla PHP backend with the MVC architecture and leverages Apache as the web server. MySQL is employed for efficient database management. On the frontend, JavaScript, CSS, and Bootstrap are used to enhance the user interface and deliver an engaging experience. Additionally, AJAX calls are incorporated, for example in the Cart feature, allowing real-time updates to the UI without the need for page refreshes. 
 
 ## Technologies Used
 
@@ -12,7 +12,8 @@ Database: MySQL
 Server: Apache
 
 ## Features
-
+- MVC Layout
+- custom built router
 - Browse and search for a wide range of shoes.
 - Dynamic generation of product cards meaning that when a new product gets added in the database it is automatically displayed on the website no need to mess with the code, just make sure to reload
 - Add items to the shopping cart. (for demonstration purposes only)
