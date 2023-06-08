@@ -7,6 +7,7 @@ SoleVault is a full-stack e-commerce website dedicated to the sale of shoes. The
 ## Features
 
 - Browse and search for a wide range of shoes.
+- Dynamic generation of product cards meaning that when a new product gets added in the database it is automatically displayed on the website no need to mess with the code, just make sure to reload
 - Add items to the shopping cart. (for demonstration purposes only)
 - View and modify the shopping cart.
 - Proceed to the checkout process.
