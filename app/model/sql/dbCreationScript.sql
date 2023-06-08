@@ -6,7 +6,7 @@ USE csc350;
 CREATE TABLE users (
   customerId INT AUTO_INCREMENT PRIMARY KEY,
   username   VARCHAR(50) NOT NULL ,
-  password   VARCHAR(20) NOT NULL
+  password   VARCHAR(250) NOT NULL
 );
 CREATE TABLE rememberMeSessions (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -34,8 +34,15 @@ CREATE TABLE cart (
   FOREIGN KEY (customerId) REFERENCES users (customerId)
 );
 
-
-
+CREATE TABLE customerKeys (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  customerId INT NOT NULL,
+  encryptionKeyCK VARCHAR(255) NOT NULL,
+  ivCK VARCHAR(255) NOT NULL,
+#   encryptionKeyRMS VARCHAR(255) NOT NULL,
+#   ivRMS VARCHAR(255) NOT NULL,
+  FOREIGN KEY (customerId) REFERENCES users(customerId)
+);
 
 CREATE TABLE purchase (
     id INT AUTO_INCREMENT PRIMARY KEY,

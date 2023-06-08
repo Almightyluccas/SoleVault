@@ -15,13 +15,13 @@ LibraryLG::sessionValidator() ;
 <body >
   <?php include('menu.php') ?>
 
-  <div id="content" class="container">
+  <div class="d-flex flex-column align-items-center justify-content-center" style="height: 40vh;">
     <div style="text-align: left; padding: 0;">
-      <h1 style="font: normal 179% 'century gothic', arial, sans-serif;color: #43423F;margin: 0 0 15px 0;padding: 15px 0 5px 0;" >Logoff</h1>
+      <h1 style="font: normal 179% 'century gothic', arial, sans-serif;color: #43423F;margin: 0 0 15px 0;" >Sign Out</h1>
       <div class="form_settings">
         <form action="index.php" method="get">
           <input type="hidden" name="choice" value="logoff2" />
-          <p style="padding-top: 15px"><span>&nbsp;</span><input class="submit" type="submit" name="contact_submitted" value="Logoff" />
+          <p style="padding-top: 15px"><span>&nbsp;</span><button class="btn btn-primary">Sign Out</button>
         </form>
       </div>
     </div>
