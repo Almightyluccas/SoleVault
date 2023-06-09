@@ -4,7 +4,7 @@
 
 
 SoleVault is a full-stack e-commerce website dedicated to the sale of shoes. The project utilizes a vanilla PHP backend with the MVC architecture and leverages Apache as the web server. MySQL is employed for efficient database management. On the frontend, JavaScript, CSS, and Bootstrap are used to enhance the user interface and deliver an engaging experience. Additionally, AJAX calls are incorporated, for example in the Cart feature, allowing real-time updates to the UI without the need for page refreshes.  Check documentation for more information on Rememeber Me functinality and the custom router 
-[documentation]([LICENSE.md](https://github.com/Almightyluccas/SoleVault/tree/main/documentation))
+[documentation](https://github.com/Almightyluccas/SoleVault/tree/main/documentation)
 
 ## Technologies Used
 
