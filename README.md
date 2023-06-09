@@ -15,7 +15,7 @@ Server: Apache
 
 ## Features
 - MVC Layout
-- custom built router [documentation](https://github.com/Almightyluccas/SoleVault/blob/main/documentation/router.md)
+- custom built [router](https://github.com/Almightyluccas/SoleVault/blob/main/documentation/router.md)
 - Browse and search for a wide range of shoes.
 - Dynamic generation of product cards meaning that when a new product gets added in the database it is automatically displayed on the website no need to mess with the code, just make sure to reload
 - Add items to the shopping cart. (for demonstration purposes only)
@@ -23,7 +23,7 @@ Server: Apache
 - Proceed to the checkout process.
 - Manage user accounts and login/logout functionality.
 - Real-time updates to the UI with AJAX calls.
-- Proper Remember Me functionality with token and series [documentation]([SoleVault/documentation/router.md](https://github.com/Almightyluccas/SoleVault/blob/main/documentation/rememeberMe.md))
+- Proper [Remember Me functionality]([SoleVault/documentation/router.md](https://github.com/Almightyluccas/SoleVault/blob/main/documentation/rememeberMe.md)) with token and series 
 - Warning is displayed if token and series get stolen and used elsewhere upon visiting the site again
 - Proper password hashing for security  
 
