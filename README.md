@@ -22,7 +22,7 @@ Server: Apache
 - Proceed to the checkout process.
 - Manage user accounts and login/logout functionality.
 - Real-time updates to the UI with AJAX calls.
-- Proper [Remember Me functionality]([SoleVault/documentation/router.md](https://github.com/Almightyluccas/SoleVault/blob/main/documentation/rememeberMe.md)) with token and series 
+- Proper [Remember Me functionality](https://github.com/Almightyluccas/SoleVault/blob/main/documentation/rememeberMe.md) with token and series 
 - Warning is displayed if token and series get stolen and used elsewhere upon visiting the site again
 - Proper password hashing for security  
 
