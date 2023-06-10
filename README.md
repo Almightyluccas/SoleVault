@@ -3,8 +3,7 @@
 (for learning purposes only)
 
 
-SoleVault is a full-stack e-commerce website dedicated to the sale of shoes. The project utilizes a vanilla PHP backend with the MVC architecture and leverages Apache as the web server. MySQL is employed for efficient database management. On the frontend, JavaScript, CSS, and Bootstrap are used to enhance the user interface and deliver an engaging experience. Additionally, AJAX calls are incorporated, for example in the Cart feature, allowing real-time updates to the UI without the need for page refreshes.  Check documentation for more information on Rememeber Me functinality and the custom router 
-[documentation](https://github.com/Almightyluccas/SoleVault/tree/main/documentation)
+SoleVault is a full-stack e-commerce website dedicated to the sale of shoes. The project utilizes a vanilla PHP backend with the MVC architecture and leverages Apache as the web server. MySQL is employed for efficient database management. On the frontend, JavaScript, CSS, and Bootstrap are used to enhance the user interface and deliver an engaging experience. Additionally, AJAX calls are incorporated, for example in the Cart feature, allowing real-time updates to the UI without the need for page refreshes.  Check documentation for more information on [Rememeber Me functinality and the custom router ](https://github.com/Almightyluccas/SoleVault/tree/main/documentation)
 
 ## Technologies Used
 
@@ -15,7 +14,7 @@ Server: Apache
 
 ## Features
 - MVC Layout
-- custom built router
+- custom built [router](https://github.com/Almightyluccas/SoleVault/blob/main/documentation/router.md)
 - Browse and search for a wide range of shoes.
 - Dynamic generation of product cards meaning that when a new product gets added in the database it is automatically displayed on the website no need to mess with the code, just make sure to reload
 - Add items to the shopping cart. (for demonstration purposes only)
@@ -23,7 +22,7 @@ Server: Apache
 - Proceed to the checkout process.
 - Manage user accounts and login/logout functionality.
 - Real-time updates to the UI with AJAX calls.
-- Proper Remember Me functionality with token and series
+- Proper [Remember Me functionality](https://github.com/Almightyluccas/SoleVault/blob/main/documentation/rememeberMe.md) with token and series 
 - Warning is displayed if token and series get stolen and used elsewhere upon visiting the site again
 - Proper password hashing for security  
 
