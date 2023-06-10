@@ -6,7 +6,7 @@ use app\model\Cart;
 
 class CartController {
 
-  public function cart() : void {
+  public function handleCart() : void {
     session_start() ;
     if (isset($_SESSION['ON'])) {
       $customerId = $_SESSION['customerId'] ;

@@ -10,4 +10,4 @@ use app\core\Router;
 Autoloader::register();
 
 $router = new Router();
-$router->handleRequest();
+$router->handleUserRequest();

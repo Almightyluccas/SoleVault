@@ -34,9 +34,11 @@
                                                      In-Progress
  ----------------------------------------------------------------------------------------------------------------
  
- 
- 
- 
+
+   TODO: finish implementing discount codes
+
+
+   TODO: Add Docker to the project
  
  
  
@@ -63,13 +65,7 @@
   TODO: fix navBar, login page and registration page
   
   
-  
-  
-  TODO: finish implementing discount codes
-  
-  
-  
-  
+
   
   TODO: implement purchased database in order to save the purchase
   

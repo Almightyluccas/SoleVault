@@ -6,14 +6,15 @@ use app\library\LibraryLG;
 use app\model\Authentication;
 
 class RegistrationController {
-  public function register(bool $performRegisterAction = false ) : void {
+  public function handleRegister(bool $performRegisterAction = false ) : void {
     if ($performRegisterAction) {
-      $user = LibraryLG::getValue('username') ;
-      $pass = LibraryLG::getValue('password') ;
-      $passTwo = LibraryLG::getValue('password2') ;
+      $user = LibraryLG::removeAngleBracket(strtolower(LibraryLG::getValue('username'))) ;
+      $pass = LibraryLG::removeAngleBracket(LibraryLG::getValue('password')) ;
+      $passTwo = LibraryLG::removeAngleBracket(LibraryLG::getValue('password2')) ;
       if(trim($pass) === trim($passTwo)) {
         $db = new Authentication() ;
-        if ($db->register($user, $pass)) {
+        $hashedPass = password_hash($pass, PASSWORD_DEFAULT) ;
+        if ($db->register($user, $hashedPass)) {
           header("Location: index.php") ;
         } else {
           $message = "ERROR: Userid Already In Use" ;

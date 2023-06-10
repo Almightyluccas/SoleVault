@@ -3,19 +3,22 @@
 namespace app\library;
 
 class LibraryLG {
-  public static function getValue($valueName) : ?string {
+  public static function getValue(mixed $valueName) : ?string {
     isset($_GET[$valueName]) ? $value = $_GET[$valueName] : $value = null ;
     return $value;
   }
-  public static function getValueString($valueName) : ?string {
+  public static function getValueString(string $valueName) : ?string {
     isset($_GET[$valueName]) ? $value = $_GET[$valueName] : $value = '' ;
     return $value;
   }
-  public static function postValue($x) : ?string {
+  public static function removeAngleBracket(string $inputString): string {
+    return str_replace(['<', '>'], '', $inputString) ;
+  }
+  public static function postValue(mixed $x) : ?string {
     isset($_POST[$x]) ? $value = $_POST[$x] : $value = null ;
     return $value ;
   }
-  public static function isNumber($valueToEvaluate) {
+  public static function isNumber(mixed $valueToEvaluate) {
     if ($valueToEvaluate==null|| $valueToEvaluate==""|| trim($valueToEvaluate)==" ") {
       return false ;
     } else if(filter_var($valueToEvaluate, FILTER_VALIDATE_FLOAT)) {
@@ -24,7 +27,7 @@ class LibraryLG {
       return false ;
     }
   }
-  public static function isInteger($valueToEvaluate) {
+  public static function isInteger(mixed $valueToEvaluate) {
     if ($valueToEvaluate==null|| $valueToEvaluate==""|| trim($valueToEvaluate)==" ") {
       return false;
     } else if(filter_var($valueToEvaluate, FILTER_VALIDATE_INT)) {

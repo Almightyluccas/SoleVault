@@ -16,24 +16,24 @@ use app\library\LibraryLG;
 
 class Router {
   private array $routes = [
-    null => [AuthenticationController::class, 'checkRememberMe'],
-    'login' => [AuthenticationController::class, 'checkRememberMe'],
-    'logon' => [AuthenticationController::class, 'handleLogin'],
-    'products' => [ProductsController::class, 'productPage'],
-    'singleProduct' => [ProductsController::class, 'singlePage'],
-    'cart' => [CartController::class, 'cart'],
-    'home' => [ProductsController::class, 'homePage'],
-    'about' => [AboutController::class, 'about'],
+    null => [AuthenticationController::class, 'handleLogin'],
+    'login' => [AuthenticationController::class, 'handleLogin'],
+    'logon' => [AuthenticationController::class, 'handleLoginClicked'],
+    'products' => [ProductsController::class, 'handleMainProductPage'],
+    'singleProduct' => [ProductsController::class, 'handleSinglePage'],
+    'cart' => [CartController::class, 'handleCart'],
+    'home' => [ProductsController::class, 'handleHomePage'],
+    'about' => [AboutController::class, 'handleAbout'],
     'thankyou' => [CartController::class, 'thankYouCheckout'],
-    'contact' => [ContactController::class, 'contact', ],
-    'registration' => [RegistrationController::class, 'register' ],
-    'register' => [RegistrationController::class, 'register', true],
-    'logoff' => [AuthenticationController::class, 'logOff'],
-    'logoff2' => [AuthenticationController::class, 'logOff', true],
+    'contact' => [ContactController::class, 'handleContact', ],
+    'registration' => [RegistrationController::class, 'handleRegister' ],
+    'register' => [RegistrationController::class, 'handleRegister', true],
+    'logoff' => [AuthenticationController::class, 'handleLogOff'],
+    'logoff2' => [AuthenticationController::class, 'handleLogOff', true],
     'acctBreach' => [ErrorController::class, 'accountBreachErr'],
   ];
 
-  public function handleRequest(): void {
+  public function handleUserRequest(): void {
     $choice = LibraryLG::getValue('choice');
 
     if (isset($this->routes[$choice])) {

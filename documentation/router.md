@@ -12,7 +12,7 @@ The Router class is defined in the `app\core\Router` namespace and contains the 
 
 ### Methods
 
-- `handleRequest()`: Handles the incoming request and calls the appropriate controller method based on the specified route.
+- `handleUserRequest()`: Handles the incoming request and calls the appropriate controller method based on the specified route.
 - `handleInvalidRoute()`: Handles invalid routes and displays a 404 error page.
 
 ## Usage
@@ -21,7 +21,7 @@ To use the Router class, follow these steps:
 
 1. Define the routes in the `$routes` property
 2. Make sure each route in `$routes` calls the controller handler
-3. Implement the `handleRequest()` method to handle incoming requests
+3. Implement the `handleUserRequest()` method to handle incoming requests
 4. Implement the `handleInvalidRoute()` method to handle invalid routes
 
 

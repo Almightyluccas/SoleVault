@@ -7,13 +7,13 @@ use app\model\Products;
 
 class ProductsController {
 
-  public function productPage() : void {
+  public function handleMainProductPage() : void {
     $productGen = new Products() ;
     $products = $productGen->getProducts() ;
     include '..\app\view\products.php' ;
   }
 
-  public function singlePage() : void {
+  public function handleSinglePage() : void {
     $productId = LibraryLG::getValue('productId') ;
     $routedFrom = LibraryLG::getValue('frm') ;
     $retrieveProduct = new Products() ;
@@ -21,7 +21,7 @@ class ProductsController {
     include '..\app\view\singleProduct.php' ;
   }
 
-  public function homePage() : void {
+  public function handleHomePage() : void {
     include('..\app\view\home.php') ;
   }
 

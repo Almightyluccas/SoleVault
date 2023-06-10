@@ -4,7 +4,7 @@ namespace app\controller;
 
 class AboutController {
 
-  public function about() : void {
+  public function handleAbout() : void {
     include('..\app\view\about.php') ;
   }
 

@@ -1,5 +1,4 @@
 <?php
-
 namespace app\controller;
 
 use app\library\LibraryLG;
@@ -55,6 +54,7 @@ class AuthenticationController {
   }
 
   private function setRememberMeCookie(int $customerId, string $seriesHex, string $tokenHex) : void {
+
     $cookieValue = $customerId . '|' . $seriesHex . '|' . $tokenHex ;
     setcookie('auth-rem', $cookieValue, time() + (7 * 24 * 60 * 60), '/') ;
   }
@@ -72,57 +72,59 @@ class AuthenticationController {
   }
 
   private function validateRememberMeCookie(array $cookieArr) : void {
-      $customerIdCookie = intval($cookieArr[0]) ;
-      $seriesBin = $cookieArr[1] ;
-      $tokenBin = $cookieArr[2] ;
-      $result = $this->auth->getRememberMeCred($customerIdCookie, $seriesBin) ;
-      $validateCallback = fn($result) => (
-        !empty($result) &&
-        $customerIdCookie === $result[0]['customerId'] &&
-        $seriesBin === $result[0]['series'] &&
-        $tokenBin === $result[0]['token']
+    $customerIdCookie = intval($cookieArr[0]) ;
+    $seriesBin = $cookieArr[1] ;
+    $tokenBin = $cookieArr[2] ;
+    $result = $this->auth->getRememberMeCred($customerIdCookie, $seriesBin) ;
+    $validateCallback = fn($result) => (
+      !empty($result) &&
+      $customerIdCookie === $result[0]['customerId'] &&
+      $seriesBin === $result[0]['series'] &&
+      $tokenBin === $result[0]['token']
+    );
+    if ($validateCallback($result)) {
+      $this->successfulAuth(
+        $this->auth->getUsername($customerIdCookie),
+        $customerIdCookie,
+        $seriesBin
       );
-      if ($validateCallback($result)) {
-        $this->successfulAuth(
-          $this->auth->getUsername($customerIdCookie),
-          $customerIdCookie,
-          $seriesBin
-        );
-      }else {
-        $this->destroyAuth($customerIdCookie);
-        header("Location: index.php?choice=login&authBreach=1") ;
-      }
+    }else {
+      $this->destroyAuth($customerIdCookie);
+      header("Location: index.php?choice=login&authBreach=1") ;
+    }
   }
-
-  public function checkRememberMe() : void {
-    include(__DIR__ . '/../view/login.php') ;
+  private function checkRememberMe() : void {
     if (isset($_COOKIE['auth-rem'])) {
       $rememberMeCookie = explode('|',  $_COOKIE['auth-rem']) ;
       $this->validateRememberMeCookie($rememberMeCookie) ;
     }
   }
+  public function handleLogin() : void {
+    include(__DIR__ . '/../view/login.php') ;
+    $this->checkRememberMe() ;
+  }
 
-  private function checkForUserInputError(string $username, string $password) : string {
+  private function checkForUserInputError(string $username, ?string $password) : string {
     $message = '' ;
-      if((trim($username) === '' || trim($username) === null) &&(trim($password) === '' ||trim($password) === null)) {
-        $message = 'Empty Username and Password' ;
-      } else if (trim($username) === '' || trim($username) === null) {
-        $message = 'Empty Username' ;
-      } elseif (trim($password) === '' || trim($password) === null) {
-        $message = 'Empty Password';
-      }
-      if ($message !== '') {
-        include(__DIR__ . '/../view/login.php') ;
-        return $message ;
-      }
+    if((trim($username) === '' || trim($username) === null) &&(trim($password) === '' ||trim($password) === null)) {
+      $message = 'Empty Username and Password' ;
+    } else if (trim($username) === '' || trim($username) === null) {
+      $message = 'Empty Username' ;
+    } elseif (trim($password) === '' || trim($password) === null) {
+      $message = 'Empty Password';
+    }
+    if ($message !== '') {
+      include(__DIR__ . '/../view/login.php') ;
+      return $message ;
+    }
     return $message ;
   }
 
 
-  public function handleLogin() : string {
+  public function handleLoginClicked() : string {
 
-    $username = strtolower(LibraryLG::getValueString('username')) ;
-    $password = LibraryLG::getValue('password') ;
+    $username = LibraryLG::removeAngleBracket(strtolower(LibraryLG::getValue('username'))) ;
+    $password = LibraryLG::removeAngleBracket(LibraryLG::getValue('password')) ;
     $message = $this->checkForUserInputError($username, $password) ;
     if ($message !== '') {
       return $message ;
@@ -136,14 +138,12 @@ class AuthenticationController {
       exit() ;
     } else {
       $message = 'Invalid-login' ;
-        include(__DIR__ . '/../view/login.php') ;
+      include(__DIR__ . '/../view/login.php') ;
       return $message ;
     }
   }
 
-
-
-  public function logOff(bool $fullyLogOff = false) : void {
+  public function handleLogOff(bool $fullyLogOff = false) : void {
     if ($fullyLogOff) {
       session_start() ;
       $rememberMeParts = explode('|', $_COOKIE['auth-rem']) ;
