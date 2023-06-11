@@ -10,10 +10,11 @@ class Database {
 
 
   public function __construct() {
-    $this->servername = 'localhost';
-    $this->username = 'root';
-    $this->password = '';
-    $this->databaseName = 'csc350';
+    $config = parse_ini_file('../dbConfig.conf') ;
+    $this->servername = $config['serverName'] ;
+    $this->username = $config['dbUsername'] ;
+    $this->password = $config['dbPassword'] ;
+    $this->databaseName = $config['dbName'] ;
   }
 
   private function connectToDatabase(): mysqli {

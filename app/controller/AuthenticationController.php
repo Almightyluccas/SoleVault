@@ -5,6 +5,7 @@ use app\core\Router;
 use app\library\LibraryLG;
 use app\model\Authentication;
 use Exception;
+use mysqli_sql_exception;
 
 class AuthenticationController {
 
@@ -35,15 +36,15 @@ class AuthenticationController {
     if($series !== null) {
       try {
         $this->auth->removeRememberMe($customerId ,$series) ;
-      } catch (Exception $e) {
+      } catch (mysqli_sql_exception $e) {
         error_log(var_export($e, true)) ;
         Router::redirect(['choice'=>'err500']) ;
       }
-      header("Location: index.php") ;
+      Router::redirect(['choice' => 'login']);
     } else {
       try {
         $this->auth->removeAllRememberMe($customerId);
-      } catch (Exception $e) {
+      } catch (mysqli_sql_exception $e) {
         error_log(var_export($e, true)) ;
         Router::redirect(['choice'=>'err500']) ;
       }
@@ -58,11 +59,11 @@ class AuthenticationController {
         $this->setRememberMeCookie($customerId, $series, $token);
         try {
           $this->auth->insertRememberMe($customerId, $series, $token) ;
-        } catch (Exception $e) {
+        } catch (mysqli_sql_exception $e ) {
           error_log(var_export($e, true)) ;
           Router::redirect(['choice'=>'err500']);
         }
-      } catch (Exception $e) {
+      } catch (mysqli_sql_exception | Exception $e) {
         echo $e ;
       }
     }
@@ -79,7 +80,7 @@ class AuthenticationController {
         $token = bin2hex(random_bytes(25)) ;
         $this->setRememberMeCookie($customerId, $series, $token);
         $this->auth->insertNewTokenRemMe($customerId, $series, $token);
-      } catch (Exception $e) {
+      } catch (mysqli_sql_exception | Exception $e) {
         error_log(var_export($e, true)) ;
         Router::redirect(['choice'=>'err500']) ;
       }
@@ -104,7 +105,7 @@ class AuthenticationController {
         try {
           $username = $this->auth->getUsername($customerIdCookie) ;
           $this->successfulAuth($username, $customerIdCookie, $seriesBin) ;
-        } catch (Exception $e) {
+        } catch (mysqli_sql_exception $e) {
           error_log(var_export($e, true)) ;
           Router::redirect(['choice' => 'err500']) ;
         }
@@ -112,7 +113,7 @@ class AuthenticationController {
         $this->destroyAuth($customerIdCookie);
         Router::redirect(['choice' => 'login', 'authBreach' => '1']) ;
       }
-    } catch (Exception $e) {
+    } catch (mysqli_sql_exception $e) {
       error_log(var_export($e, true)) ;
       Router::redirect(['choice' => 'err500']) ;
     }
@@ -154,14 +155,14 @@ class AuthenticationController {
           $this->setRememberMe($customerId) ;
           $this->successfulAuth($username, $customerId) ;
           Router::redirect(['choice' => 'home']) ;
-        } catch (Exception $e) {
+        } catch (mysqli_sql_exception $e) {
           error_log(var_export($e, true)) ;
           Router::redirect(['choice' => 'err500']) ;
         }
       } else {
         Router::redirect(['choice' => 'login', 'message' => 'Invalid-Login']) ;
       }
-    } catch (Exception $e) {
+    } catch (mysqli_sql_exception $e) {
       error_log(var_export($e, true)) ;
       Router::redirect(['choice' => 'err500']) ;
     }

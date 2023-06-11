@@ -40,7 +40,9 @@
             <input type="password" id="password" class="form-control form-control-lg" name='password2'/>
             <label class="form-label contact" for="password">Confirm Password</label>
             <?php
-              if(isset($_GET['messsage'])) echo "<div style='color:red;width:330px'>".$_GET['message']."</div>";
+              if(isset($_GET['message'])) {
+                echo "<div style='color:red;width:330px'>". 'Error: ' .$_GET['message']."</div>";
+              }
               if(isset($message)) echo "<div style='color:red;width:330px'>".$message."</div>";
             ?>
           </div>

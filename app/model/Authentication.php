@@ -122,7 +122,7 @@ class Authentication {
          throw new Exception('Not Found') ;
        }
 
-    } catch (mysqli_sql_exception|Exception $e) {
+    } catch (mysqli_sql_exception | Exception $e) {
        error_log(var_export($e,true)) ;
        throw $e ;
     }
