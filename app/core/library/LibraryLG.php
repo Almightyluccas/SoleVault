@@ -1,6 +1,8 @@
 <?php
 
-namespace app\library;
+namespace app\core\library;
+
+use app\core\Router;
 
 class LibraryLG {
   public static function getValue(mixed $valueName) : ?string {
@@ -37,13 +39,13 @@ class LibraryLG {
     }
   }
   public static function sessionValidator() : void {
-    session_start();
-    if ($_SESSION['ON'] ==false || $_SESSION['ON']==null) {
-      session_unset();
-      session_destroy();
-      setcookie(session_name(),"",time()-1,"/");
-      setcookie(session_name(),"",time()-1);
-      header( 'Location: index.php?message=Invalid-Authentication' );
+    session_start() ;
+    if (!$_SESSION['ON']) {
+      session_unset() ;
+      session_destroy() ;
+      setcookie(session_name(),"",time()-1,"/") ;
+      setcookie(session_name(),"",time()-1) ;
+      Router::redirect(['message' => 'Invalid-Authentication']);
     } else {
       if (isset($_SESSION['LAST_ACTIVITY'])) {
         if ( time() - $_SESSION['LAST_ACTIVITY'] > 600) {
@@ -51,7 +53,7 @@ class LibraryLG {
           session_destroy();
           setcookie(session_name(),"",time()-1,"/");
           setcookie(session_name(),"",time()-1);
-          header( 'Location: index.php?message=Session-Time-Out' );
+          Router::redirect(['message' => 'Session-Time-Out']);
         }
       }
     }

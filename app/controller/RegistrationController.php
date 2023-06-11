@@ -2,9 +2,9 @@
 
 namespace app\controller;
 
+use app\core\library\LibraryLG;
 use app\core\Router;
-use app\library\LibraryLG;
-use app\model\Authentication;
+use app\model\Registration;
 use mysqli_sql_exception;
 
 class RegistrationController {
@@ -13,7 +13,7 @@ class RegistrationController {
     $pass = LibraryLG::removeAngleBracket(LibraryLG::getValue('password')) ;
     $passTwo = LibraryLG::removeAngleBracket(LibraryLG::getValue('password2')) ;
     if(trim($pass) === trim($passTwo)) {
-      $db = new Authentication() ;
+      $db = new Registration() ;
       $hashedPass = password_hash($pass, PASSWORD_DEFAULT) ;
       try {
         if ($db->register($user, $hashedPass)) {

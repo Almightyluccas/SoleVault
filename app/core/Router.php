@@ -3,13 +3,13 @@
 namespace app\core ;
 
 use app\controller\AboutController;
+use app\controller\AuthenticationController;
 use app\controller\CartController;
 use app\controller\ContactController;
-use app\controller\AuthenticationController;
 use app\controller\ErrorController;
 use app\controller\ProductsController;
 use app\controller\RegistrationController;
-use app\library\LibraryLG;
+use app\core\library\LibraryLG;
 
 
 class Router {
@@ -28,7 +28,7 @@ class Router {
     'register' => [RegistrationController::class, 'handleRegister', true],
     'logoff' => [AuthenticationController::class, 'handleLogOff'],
     'logoff2' => [AuthenticationController::class, 'handleLogOff', true],
-
+    'err500' => [ErrorController::class, 'show500Error']
   ];
 
   public function handleUserRequest(): void {

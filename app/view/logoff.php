@@ -1,5 +1,7 @@
 <?php
-use app\library\LibraryLG ;
+
+use app\core\library\LibraryLG;
+
 LibraryLG::sessionValidator() ;
 ?>
 

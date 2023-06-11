@@ -7,7 +7,7 @@ use app\core\Autoloader;
 use app\core\Router;
 
 
-Autoloader::register();
+Autoloader::register() ;
 
 $router = new Router();
 $router->handleUserRequest() ;

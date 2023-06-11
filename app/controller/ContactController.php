@@ -4,8 +4,8 @@ namespace app\controller;
 
 class ContactController {
 
-  public function handleContact () {
-    include('..\app\view\contact.php') ;
+  public function handleContact () : void {
+    include __DIR__ . '/../view/contact.php' ;
 }
 
 }

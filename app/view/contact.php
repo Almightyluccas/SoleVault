@@ -1,5 +1,5 @@
 <?php
-\app\library\LibraryLG::sessionValidator() ;
+\app\core\library\LibraryLG::sessionValidator() ;
 ?>
 <!Doctype html>
 <html lang="en">

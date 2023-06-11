@@ -12,34 +12,6 @@ class Authentication {
     $this->database = new Database() ;
 	}
 
-	public function register(string $user, string $pass) : bool {
-     try {
-       $user = strtolower($user) ;
-       $result = $this->database->fetchFromDatabase(
-         "SELECT * FROM csc350.users"
-       ) ;
-       foreach ($result as $row) {
-         if ($row['username'] == $user) {
-           return false;
-         }
-       }
-       $preparedValues = [$user, $pass] ;
-       $result = $this->database->queryDatabase(
-         "INSERT INTO csc350.users (username, password)
-              VALUES (?, ?)" , $preparedValues
-       );
-       if($result) {
-         return true;
-       } else {
-         return false ;
-       }
-     } catch (mysqli_sql_exception $e) {
-       error_log(var_export($e, true)) ;
-       throw $e ;
-     }
-
-	}
-
 	public function login(string $user, string $pass) : bool {
      $user = strtolower($user) ;
      try {

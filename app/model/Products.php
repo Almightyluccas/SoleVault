@@ -4,47 +4,28 @@ namespace app\model;
 
 //TODO: fix empty auto column add if products doesn't fill full space
 
-class Products
-{
-  private string $serverName, $dbUsername, $dbPassword, $dbName;
-  function __construct() {
-    $this->serverName = 'localhost' ;
-    $this->dbUsername = 'root';
-    $this->dbPassword = '';
-    $this->dbName = 'csc350';
+class Products {
+  private Database $database ;
+  public function __construct() {
+    $this->database = new Database() ;
   }
-  function getProducts() : array {
-
-      $conn = mysqli_connect($this->serverName, $this->dbUsername, $this->dbPassword, $this->dbName);
-      if (!$conn) {
-        die("Connection failed: " . mysqli_connect_error());
-      }
-      $sql = "SELECT * FROM csc350.products";
-      $result = mysqli_query($conn, $sql);
-      $products = [];
-      while ($row = mysqli_fetch_assoc($result)) {
-        $products[] = $row;
-      }
-      mysqli_close($conn);
-      return $products;
-
+  public function getProducts(): array {
+    try {
+      return $this->database->fetchFromDatabase("SELECT * FROM csc350.products");
+    } catch (\mysqli_sql_exception $e) {
+      error_log(var_export($e, true));
+      throw $e;
+    }
   }
-
-  function getSingleProduct ($productId) : array {
-    $product = [] ;
-    $conn = mysqli_connect($this->serverName, $this->dbUsername, $this->dbPassword, $this->dbName);
-    if (!$conn) {
-      die("Connection failed: " . mysqli_connect_error());
+  public function getSingleProduct($productId): array {
+    try {
+      return $this->database->fetchFromDatabase(
+        "SELECT * FROM csc350.products WHERE productId = ?", [$productId]
+      ) ;
+    } catch (\mysqli_sql_exception $e) {
+      error_log(var_export($e, true));
+      throw $e;
     }
-    $sql = "SELECT * FROM csc350.products 
-            WHERE productId = $productId " ;
-    $result = mysqli_query($conn, $sql) ;
-    while ($row = mysqli_fetch_assoc($result)) {
-      $product[] = $row;
-    }
-    mysqli_close($conn);
-
-    return $product ;
   }
 
 }

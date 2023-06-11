@@ -1,5 +1,3 @@
-<!--TODO: Fix cart quantity arrows not showing-->
-
 <!doctype html>
 <html lang="en">
 <head>

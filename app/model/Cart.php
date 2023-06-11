@@ -1,219 +1,176 @@
 <?php
-
-
-
 namespace app\model;
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
-use mysql_xdevapi\Exception;
-use mysqli;
+use mysqli_sql_exception ;
 
-class Cart
-{
-	private string $hostName , $username, $password, $database ;
-	function __construct() {
-		$this->hostName = 'localhost' ;
-		$this->username = 'root';
-		$this->password = '';
-		$this->database = 'csc350';
-	}
 
-	function addItem($customerId, $productId, $quantity) : void {
-		try {
-			$mysqli = new mysqli($this->hostName, $this->username, $this->password, $this->database);
-			if ($mysqli->connect_errno) {
-				echo "Failed to connect to MySQL at addItem() Cart-Class: " . $mysqli->connect_error;
-				exit();
-			}
-
-			$check_query = "SELECT * FROM csc350.cart WHERE customerId = '$customerId' AND productId = '$productId'";
-			$check_result = $mysqli->query($check_query);
-
-			if ($check_result->num_rows > 0) {
-				$row = $check_result->fetch_assoc();
-				$existingQuantity = $row['quantity'];
-				$newQuantity = $existingQuantity + $quantity;
-
-				$update_query = "UPDATE csc350.cart SET quantity = '$newQuantity' WHERE customerId = '$customerId' AND productId = '$productId'";
-				$update_result = $mysqli->query($update_query);
-
-				if (!$update_result) {
-					error_log("Failed to update item quantity: " . $mysqli->error);
-					exit();
-				}
-			} else {
-
-				$product_query = "SELECT * FROM csc350.products WHERE productId = '$productId'";
-				$product_result = $mysqli->query($product_query);
-				$product_row = $product_result->fetch_assoc();
-				$insert_query = "INSERT INTO csc350.cart (customerId, productId, quantity, price)
-                             VALUES (?, ?, ?, ?)";
-				$stmt = $mysqli->prepare($insert_query);
-				$stmt->bind_param('iiii', $customerId, $productId, $quantity, $product_row['price']);
-				$stmt->execute();
-
-				if ($stmt->errno) {
-					error_log("Failed to insert item: " . $stmt->error);
-					exit();
-				}
-				$stmt->close();
-			}
-			$mysqli->close();
-		} catch (Exception $error) {
-			error_log('There was an error adding Product to the cart (addItem() from Cart Class): ' . $error);
-		}
-	}
-
-	public function getCartData($customerId) : array {
-		try {
-			$connection = mysqli_connect($this->hostName, $this->username, $this->password, $this->database);
-			$query = "
-                SELECT c.customerId, c.productId, c.quantity, c.price, p.imageUrl, p.productName
-                FROM csc350.cart c
-                INNER JOIN csc350.products p ON c.productId = p.productId
-                WHERE c.customerId = $customerId;
-            ";
-			$result = mysqli_query($connection, $query);
-			$cartData = [];
-			if ($result) {
-				while ($row = mysqli_fetch_assoc($result)) {
-					$cartData[] = $row;
-				}
-			} else {
-				error_log("Error: " . mysqli_error($connection));
-			}
-			mysqli_close($connection);
-			return $cartData;
-		} catch (Exception $error) {
-			error_log("There was an error with getCartData(): " . $error->getMessage());
-			return [];
-		}
-	}
-	function emptySingleCartItem($customerId, $productId) : void {
-
-    $mysqli = new mysqli($this->hostName, $this->username, $this->password, $this->database);
-    if ($mysqli->connect_errno) {
-      echo "Failed to connect to MySQL at getProductName() Cart-Class: " . $mysqli->connect_error;
-      exit();
-    }
-    $sql = "DELETE FROM csc350.cart WHERE customerId = $customerId AND productId = $productId";
-    $stmt = $mysqli->prepare($sql);
-    $stmt->execute();
-    $stmt->close() ;
-	}
-  function updateCartItemQuantity($customerId, $productId, $quantity) : void {
-    $mysqli = new mysqli($this->hostName, $this->username, $this->password, $this->database);
-    if ($mysqli->connect_errno) {
-      echo "Failed to connect to MySQL at getProductName() Cart-Class: " . $mysqli->connect_error;
-      exit();
-    }
-    $sql = " UPDATE csc350.cart 
-             SET quantity = $quantity 
-             WHERE customerId = $customerId AND productId = $productId";
-    $stmt = $mysqli->prepare($sql);
-    $stmt->execute();
-    $stmt->close() ;
+class Cart {
+  private Database $database ;
+  public function __construct() {
+    $this->database = new Database() ;
   }
-	function emptyAllCartItems($customerId) : void {
-		try{
-			$mysqli = new mysqli($this->hostName, $this->username, $this->password, $this->database);
-			if ($mysqli->connect_errno) {
-				echo "Failed to connect to MySQL at getProductName() Cart-Class: " . $mysqli->connect_error;
-				exit();
-			}
-			$sql = "DELETE FROM csc350.cart WHERE customerId = ? ";
-			$stmt = $mysqli->prepare($sql);
-			$stmt->bind_param('i', $customerId);
-			$stmt->execute();
-      $stmt->close() ;
-		}catch(Exception $error) {
-			error_log('there was an error clearing the cart: ' .$error->getMessage()) ;
-		}
-	}
-	function getProductName($productId) : string {
-			$mysqli = new mysqli($this->hostName, $this->username, $this->password, $this->database);
-			if ($mysqli->connect_errno) {
-				error_log("Failed to connect to MySQL at getProductName() Cart-Class: " . $mysqli->connect_error) ;
-				exit();
-			}
-			$sql = "SELECT productName FROM csc350.products WHERE productId = '$productId'";
-			$result = $mysqli->query($sql);
-			if ($result && $result->num_rows > 0) {
-				$row = $result->fetch_assoc();
-				$productName = $row['productName'];
-			}else {
-				$productName = null;
-			}
-			$mysqli->close();
-			return $productName ;
-		}
 
-	function getItemQuantity($customerId, $productId) : int {
-		$connection = mysqli_connect($this->hostName, $this->username, $this->password, $this->database);
-		if (!$connection) {
-			die("Connection failed: " . mysqli_connect_error());
+	function addItem(int $customerId, int $productId, int $quantity) : void {
+      try {
+        $result = $this->database->fetchFromDatabase(
+          "SELECT * FROM csc350.cart WHERE customerId = '$customerId' AND productId = ? ",
+          [$productId]
+        ) ;
+        if (!empty($result)) {
+          $row = $result[0];
+          $existingQuantity = $row['quantity'];
+          $newQuantity = $existingQuantity + $quantity;
+
+          try {
+            $this->database->queryDatabase(
+              "UPDATE csc350.cart SET quantity = ? WHERE customerId = ? AND productId = ?",
+              [$newQuantity, $customerId, $productId]
+            );
+          } catch (mysqli_sql_exception $e) {
+            error_log(var_export($e, true));
+            throw $e ;
+          }
+        } else {
+          try {
+            $productResult = $this->database->fetchFromDatabase(
+              "SELECT * FROM csc350.products WHERE productId = ? ",
+              [$productId]
+            );
+            $product_row = $productResult[0] ;
+            try {
+              $this->database->queryDatabase(
+                "INSERT INTO csc350.cart (customerId, productId, quantity, price) VALUES (?, ?, ?, ?)",
+                [$customerId, $productId, $quantity, $product_row['price']]
+              );
+            } catch (mysqli_sql_exception $e) {
+              error_log(var_export($e, true));
+              throw $e ;
+            }
+          } catch (mysqli_sql_exception $e) {
+            error_log(var_export($e, true));
+            throw $e ;
+          }
+        }
+		} catch (mysqli_sql_exception $e) {
+        error_log(var_export($e, true));
+        throw $e ;
 		}
-		$query = "SELECT quantity FROM csc350.cart WHERE customerId = $customerId AND productId = $productId";
-		$result = mysqli_query($connection, $query);
-		if ($result) {
-			if (mysqli_num_rows($result) > 0) {
-				$row = mysqli_fetch_assoc($result);
-				$quantity = $row['quantity'] ;
-				mysqli_close($connection);
-				return $quantity ;
-			}
-		} else {
-			error_log("Error: " . mysqli_error($connection));
-		}
-		return 0 ;
-	}
-	function getTotalQuantity ($customerId) : int {
-		$connection = mysqli_connect($this->hostName, $this->username, $this->password, $this->database);
-		if (!$connection) {
-			die("Connection failed: " . mysqli_connect_error());
-		}
-		$query = "SELECT SUM(quantity) AS totalQuantity FROM csc350.cart WHERE customerId = $customerId";
-		$result = mysqli_query($connection, $query);
-		if ($result) {
-			$row = mysqli_fetch_assoc($result);
-			$totalQuantity = $row['totalQuantity'];
-			mysqli_close($connection);
-			return intval($totalQuantity) ;
-		} else {
-			error_log("Error: " . mysqli_error($connection));
-		}
-		return 0;
 	}
 
+	public function getCartData(int $customerId) : array {
+		try {
+      return $this->database->fetchFromDatabase(
+        "SELECT c.customerId, c.productId, c.quantity, c.price, p.imageUrl, p.productName
+        FROM csc350.cart c
+        INNER JOIN csc350.products p ON c.productId = p.productId 
+        WHERE c.customerId = ?",
+        [$customerId]
+      ) ;
+		} catch (mysqli_sql_exception $e) {
+      error_log(var_export($e, true));
+      throw $e ;
+		}
+	}
+
+	function emptySingleCartItem(int $customerId, int $productId) : void {
+    try {
+      $this->database->queryDatabase(
+        "DELETE FROM csc350.cart WHERE customerId = ? AND productId = ?" ,
+        [$customerId, $productId]
+      ) ;
+    } catch (mysqli_sql_exception $e) {
+      error_log(var_export($e, true)) ;
+      throw $e ;
+    }
+	}
+
+  function updateCartItemQuantity(int $customerId, int $productId, int $quantity) : void {
+    try {
+      $this->database->queryDatabase(
+        "UPDATE csc350.cart
+        SET quantity = ?
+        WHERE customerId = ? AND productId = ? " ,
+        [$quantity, $customerId, $productId]
+      ) ;
+    } catch (mysqli_sql_exception $e) {
+      error_log(var_export($e, true)) ;
+      throw $e ;
+    }
+  }
+	function emptyAllCartItems(int $customerId) : void {
+		try {
+      $this->database->queryDatabase(
+        "DELETE FROM csc350.cart WHERE customerId = ? " ,
+        [$customerId]
+      ) ;
+		}catch(mysqli_sql_exception $e) {
+      error_log(var_export($e, true)) ;
+      throw $e ;
+		}
+	}
+	function getProductName(int $productId) : string {
+    try {
+      $result = $this->database->fetchFromDatabase(
+        "SELECT productName FROM csc350.products WHERE productId = ?" ,
+        [$productId]
+      ) ;
+      if (!empty($result)) {
+        return $result[0]['productName'] ;
+      }
+      throw new mysqli_sql_exception("productName is empty for: $productId") ;
+    } catch (mysqli_sql_exception $e) {
+      error_log(var_export($e, true)) ;
+      throw $e ;
+    }
+  }
+
+	function getItemQuantity(int $customerId, int $productId) : int {
+    try {
+      $result = $this->database->fetchFromDatabase(
+        "SELECT quantity FROM csc350.cart WHERE customerId = ? AND productId = ?",
+        [$customerId, $productId]
+      ) ;
+      return !empty($result) ? $result[0]['quantity'] : 0 ;
+
+    } catch (mysqli_sql_exception $e) {
+      error_log(var_export($e, true)) ;
+      throw $e ;
+    }
+
+	}
+	public function getTotalQuantity (int $customerId) : int {
+    try {
+      $result = $this->database->fetchFromDatabase(
+        "SELECT SUM(quantity) AS totalQuantity FROM csc350.cart WHERE customerId = ?" ,
+        [$customerId]
+      ) ;
+      return !empty($result) ? intval($result[0]['totalQuantity']) : 0 ;
+
+    } catch (mysqli_sql_exception $e) {
+      error_log(var_export($e, true)) ;
+      throw $e ;
+    }
+	}
 	function getItemPrice($customerId, $productId) : float {
     return 0 ;
 	}
-	function getItemTotalCost($customerId, $productId) : float {
+	function getItemTotalCost(int $customerId, int $productId) : float {
 		return $this->getItemQuantity($customerId, $productId) * $this->getItemPrice($customerId, $productId);
 	}
+	public function getCartTotalPrice(int $customerId) : float {
+    try {
+      $result = $this->database->fetchFromDatabase(
+        "SELECT SUM(quantity * price) AS totalPrice FROM csc350.cart WHERE customerId = ?" ,
+        [$customerId]
+      ) ;
+      return !empty($result) ? floatval($result[0]['totalPrice']) : 0 ;
 
-	function getCartTotalPrice($customerId) : float {
-		$connection = mysqli_connect($this->hostName, $this->username, $this->password, $this->database);
-		if (!$connection) {
-			die("Connection failed: " . mysqli_connect_error());
-		}
-		$query = "SELECT SUM(quantity * price) AS totalPrice FROM csc350.cart WHERE customerId = $customerId";
-		$result = mysqli_query($connection, $query);
-
-		if ($result) {
-			$row = mysqli_fetch_assoc($result);
-			$totalPrice = $row['totalPrice'];
-			mysqli_close($connection);
-			return floatval($totalPrice);
-		} else {
-			error_log("Error: " . mysqli_error($connection));
-
-		}
-		return 0;
+    } catch (mysqli_sql_exception $e) {
+      error_log(var_export($e, true)) ;
+      throw $e ;
+    }
 	}
-  function getCartTotalPriceAfterTax($customerId) : float {
+  public function getCartTotalPriceAfterTax(int $customerId) : float {
     $total = $this->getCartTotalPrice($customerId) ;
     $total += $total * 0.08 ;
     return  $total;

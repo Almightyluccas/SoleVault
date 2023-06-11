@@ -8,9 +8,8 @@ use mysqli_sql_exception;
 class Database {
   private string $servername, $username, $password, $databaseName;
 
-
   public function __construct() {
-    $config = parse_ini_file('../dbConfig.conf') ;
+    $config = parse_ini_file(__DIR__ . '\..\..\dbConfig.conf') ;
     $this->servername = $config['serverName'] ;
     $this->username = $config['dbUsername'] ;
     $this->password = $config['dbPassword'] ;

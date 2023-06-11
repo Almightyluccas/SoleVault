@@ -1,5 +1,5 @@
 <?php
-\app\library\LibraryLG::sessionValidator() ;
+\app\core\library\LibraryLG::sessionValidator() ;
 
 use app\view\classes\itemGeneration;
 

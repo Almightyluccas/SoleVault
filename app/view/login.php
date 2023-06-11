@@ -6,25 +6,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=0.8, maximum-scale=1" />
-
   <?php
   if(isset($_GET['authBreach'])) {
     echo'<script src="javascript/accountBreachError.js" defer></script>' ;
   }
   include 'classes/scriptLoader.php'
-
   ?>
   <title>SoleVault: Login</title>
 
-
-
 </head>
 <body >
-  <?php  include 'menu.php'
-
-  ?>
-
-
+  <?php  include 'menu.php' ?>
   <div class="container-fluid " style="padding-top: 15vh">
     <div class="container py-5 h-100">
       <div class="row d-flex align-items-center justify-content-center h-100">
@@ -71,16 +63,6 @@
       </div>
     </div>
   </div>
-
-<?php
-
-
-
-
-
-?>
-
-
 
 </body>
 </html>

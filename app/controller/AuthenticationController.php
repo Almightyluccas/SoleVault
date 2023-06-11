@@ -1,8 +1,8 @@
 <?php
 namespace app\controller;
 
+use app\core\library\LibraryLG;
 use app\core\Router;
-use app\library\LibraryLG;
 use app\model\Authentication;
 use Exception;
 use mysqli_sql_exception;
