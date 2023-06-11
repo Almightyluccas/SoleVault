@@ -1,7 +1,6 @@
-CREATE DATABASE csc350;
+CREATE USER 'docker_user'@'%' IDENTIFIED BY 'password';
+GRANT SELECT, INSERT, UPDATE, DELETE ON php_docker.* TO 'docker_user'@'%';
 
-
-USE csc350;
 
 CREATE TABLE users (
   customerId INT AUTO_INCREMENT PRIMARY KEY,

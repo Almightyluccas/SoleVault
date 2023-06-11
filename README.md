@@ -38,6 +38,7 @@ To run this project locally, follow these steps:
 6. Configure the database connection in the `Database.php` file located in `app/model`. Modify the constructor with your database credentials.
 7. Start your local Apache server.
 8. Open your browser and visit `http://localhost/solevault`.
+9. Select the `/public` folder and the login page should load
 
 ## Contributing
 

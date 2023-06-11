@@ -46,7 +46,7 @@
               <input type="password" id="password" class="form-control form-control-lg" name='password'/>
               <label class="form-label contact" for="password">Password</label>
               <?php
-              if(isset($_GET['messsage'])) echo "<div class='' style='color:red;width:500px'>".$_GET['message']."</div>";
+              if(isset($_GET['message'])) echo "<div class='' style='color:red;width:500px'>".$_GET['message']."</div>";
               if(isset($message)) echo "<div style='color:red;width:500px; '>".$message."</div>";
               ?>
             </div>

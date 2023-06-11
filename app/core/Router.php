@@ -12,8 +12,6 @@ use app\controller\RegistrationController;
 use app\library\LibraryLG;
 
 
-
-
 class Router {
   private array $routes = [
     null => [AuthenticationController::class, 'handleLogin'],
@@ -30,7 +28,7 @@ class Router {
     'register' => [RegistrationController::class, 'handleRegister', true],
     'logoff' => [AuthenticationController::class, 'handleLogOff'],
     'logoff2' => [AuthenticationController::class, 'handleLogOff', true],
-    'acctBreach' => [ErrorController::class, 'accountBreachErr'],
+
   ];
 
   public function handleUserRequest(): void {
@@ -56,4 +54,21 @@ class Router {
     $errorController = new ErrorController();
     $errorController->show404Error();
   }
+
+  public static function redirect( ?array $params = [], ?string $url = 'index.php'): void {
+    if (!empty($params)) {
+      $queryString = http_build_query($params);
+      $url .= '?' . $queryString;
+    }
+    header("Location: $url") ;
+  }
+  public function addRoute(string $routeName, string $controllerClass, string $method, ?bool $hasParams = false): void {
+    $this->routes[$routeName] = [$controllerClass, $method, $hasParams];
+  }
+  public function removeRoute(string $route): void {
+    if (isset($this->routes[$route])) {
+      unset($this->routes[$route]);
+    }
+  }
+
 }

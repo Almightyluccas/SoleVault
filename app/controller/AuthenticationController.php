@@ -1,8 +1,8 @@
 <?php
 namespace app\controller;
 
+use app\core\Router;
 use app\library\LibraryLG;
-use app\model\Database;
 use app\model\Authentication;
 use Exception;
 
@@ -24,7 +24,7 @@ class AuthenticationController {
     }
     setcookie(session_name(), session_id(), time() + 600, "/") ;
     $_SESSION['LAST_ACTIVITY'] = time() ;
-    header("Location: index.php?choice=home") ;
+    Router::redirect(['choice' => 'home']);
   }
 
   private function destroyAuth(int $customerId, ?string $series = null) : void {
@@ -33,10 +33,20 @@ class AuthenticationController {
     setcookie(session_name(), "", time() - 1, "/") ;
     setcookie('auth-rem', "" , time()-1, "/" ) ;
     if($series !== null) {
-      $this->auth->removeRememberMe($customerId ,$series) ;
+      try {
+        $this->auth->removeRememberMe($customerId ,$series) ;
+      } catch (Exception $e) {
+        error_log(var_export($e, true)) ;
+        Router::redirect(['choice'=>'err500']) ;
+      }
       header("Location: index.php") ;
     } else {
-      $this->auth->removeAllRememberMe($customerId);
+      try {
+        $this->auth->removeAllRememberMe($customerId);
+      } catch (Exception $e) {
+        error_log(var_export($e, true)) ;
+        Router::redirect(['choice'=>'err500']) ;
+      }
 
     }
   }
@@ -46,7 +56,12 @@ class AuthenticationController {
         $series = bin2hex(random_bytes(25)) ;
         $token = bin2hex(random_bytes(25)) ;
         $this->setRememberMeCookie($customerId, $series, $token);
-        $this->auth->insertRememberMe($customerId, $series, $token) ;
+        try {
+          $this->auth->insertRememberMe($customerId, $series, $token) ;
+        } catch (Exception $e) {
+          error_log(var_export($e, true)) ;
+          Router::redirect(['choice'=>'err500']);
+        }
       } catch (Exception $e) {
         echo $e ;
       }
@@ -54,7 +69,6 @@ class AuthenticationController {
   }
 
   private function setRememberMeCookie(int $customerId, string $seriesHex, string $tokenHex) : void {
-
     $cookieValue = $customerId . '|' . $seriesHex . '|' . $tokenHex ;
     setcookie('auth-rem', $cookieValue, time() + (7 * 24 * 60 * 60), '/') ;
   }
@@ -66,31 +80,41 @@ class AuthenticationController {
         $this->setRememberMeCookie($customerId, $series, $token);
         $this->auth->insertNewTokenRemMe($customerId, $series, $token);
       } catch (Exception $e) {
-        echo $e->getMessage() ;
+        error_log(var_export($e, true)) ;
+        Router::redirect(['choice'=>'err500']) ;
       }
     }
   }
 
   private function validateRememberMeCookie(array $cookieArr) : void {
-    $customerIdCookie = intval($cookieArr[0]) ;
-    $seriesBin = $cookieArr[1] ;
-    $tokenBin = $cookieArr[2] ;
-    $result = $this->auth->getRememberMeCred($customerIdCookie, $seriesBin) ;
-    $validateCallback = fn($result) => (
-      !empty($result) &&
-      $customerIdCookie === $result[0]['customerId'] &&
-      $seriesBin === $result[0]['series'] &&
-      $tokenBin === $result[0]['token']
-    );
-    if ($validateCallback($result)) {
-      $this->successfulAuth(
-        $this->auth->getUsername($customerIdCookie),
-        $customerIdCookie,
-        $seriesBin
+    try {
+      $customerIdCookie = intval($cookieArr[0]) ;
+      $seriesBin = $cookieArr[1] ;
+      $tokenBin = $cookieArr[2] ;
+
+
+      $result = $this->auth->getRememberMeCred($customerIdCookie, $seriesBin) ;
+      $validateCallback = fn($result) => (
+        !empty($result) &&
+        $customerIdCookie === $result[0]['customerId'] &&
+        $seriesBin === $result[0]['series'] &&
+        $tokenBin === $result[0]['token']
       );
-    }else {
-      $this->destroyAuth($customerIdCookie);
-      header("Location: index.php?choice=login&authBreach=1") ;
+      if ($validateCallback($result)) {
+        try {
+          $username = $this->auth->getUsername($customerIdCookie) ;
+          $this->successfulAuth($username, $customerIdCookie, $seriesBin) ;
+        } catch (Exception $e) {
+          error_log(var_export($e, true)) ;
+          Router::redirect(['choice' => 'err500']) ;
+        }
+      }else {
+        $this->destroyAuth($customerIdCookie);
+        Router::redirect(['choice' => 'login', 'authBreach' => '1']) ;
+      }
+    } catch (Exception $e) {
+      error_log(var_export($e, true)) ;
+      Router::redirect(['choice' => 'err500']) ;
     }
   }
   private function checkRememberMe() : void {
@@ -99,47 +123,47 @@ class AuthenticationController {
       $this->validateRememberMeCookie($rememberMeCookie) ;
     }
   }
+  private function checkForUserInputError(string $username, ?string $password) : ?string {
+    if((trim($username) === '' || trim($username) === null) &&(trim($password) === '' ||trim($password) === null)) {
+      return 'Empty Username and Password' ;
+    } else if (trim($username) === '' || trim($username) === null) {
+      return 'Empty Username' ;
+    } elseif (trim($password) === '' || trim($password) === null) {
+      return 'Empty Password';
+    }
+    return null ;
+  }
+
   public function handleLogin() : void {
     include(__DIR__ . '/../view/login.php') ;
     $this->checkRememberMe() ;
   }
 
-  private function checkForUserInputError(string $username, ?string $password) : string {
-    $message = '' ;
-    if((trim($username) === '' || trim($username) === null) &&(trim($password) === '' ||trim($password) === null)) {
-      $message = 'Empty Username and Password' ;
-    } else if (trim($username) === '' || trim($username) === null) {
-      $message = 'Empty Username' ;
-    } elseif (trim($password) === '' || trim($password) === null) {
-      $message = 'Empty Password';
-    }
-    if ($message !== '') {
-      include(__DIR__ . '/../view/login.php') ;
-      return $message ;
-    }
-    return $message ;
-  }
-
-
-  public function handleLoginClicked() : string {
-
+  public function handleLoginClicked() : void {
     $username = LibraryLG::removeAngleBracket(strtolower(LibraryLG::getValue('username'))) ;
     $password = LibraryLG::removeAngleBracket(LibraryLG::getValue('password')) ;
-    $message = $this->checkForUserInputError($username, $password) ;
-    if ($message !== '') {
-      return $message ;
+    $errorMessage = $this->checkForUserInputError($username, $password) ;
+    if ($errorMessage) {
+      Router::redirect(['choice' => 'login', 'message' => $errorMessage]);
+      return ;
     }
-    if ($this->auth->login($username, $password)) {
-      $customerId = $this->auth->getCustomerId($username) ;
-      $this->setRememberMe($customerId);
-      $this->successfulAuth(
-        $username, $customerId
-      );
-      exit() ;
-    } else {
-      $message = 'Invalid-login' ;
-      include(__DIR__ . '/../view/login.php') ;
-      return $message ;
+    try {
+      if ($this->auth->login($username, $password)) {
+        try {
+          $customerId = $this->auth->getCustomerId($username) ;
+          $this->setRememberMe($customerId) ;
+          $this->successfulAuth($username, $customerId) ;
+          Router::redirect(['choice' => 'home']) ;
+        } catch (Exception $e) {
+          error_log(var_export($e, true)) ;
+          Router::redirect(['choice' => 'err500']) ;
+        }
+      } else {
+        Router::redirect(['choice' => 'login', 'message' => 'Invalid-Login']) ;
+      }
+    } catch (Exception $e) {
+      error_log(var_export($e, true)) ;
+      Router::redirect(['choice' => 'err500']) ;
     }
   }
 

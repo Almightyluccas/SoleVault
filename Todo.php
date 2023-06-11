@@ -33,12 +33,14 @@
  
                                                      In-Progress
  ----------------------------------------------------------------------------------------------------------------
- 
-
+   TODO: add database error handling
+   TODO: fix database connects and how I connect
+   TODO: move server connection info to a separate config page
+   TODO: Add Docker to the project
    TODO: finish implementing discount codes
 
 
-   TODO: Add Docker to the project
+
  
  
  
@@ -50,7 +52,7 @@
  
                                                         Remaining
  ----------------------------------------------------------------------------------------------------------------
- TODO: implement redis for data caching in memory
+  TODO: implement redis for data caching in memory
 
   TODO: implement compiled routing
   
