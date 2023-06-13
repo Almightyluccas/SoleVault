@@ -3,12 +3,10 @@
 namespace app\model;
 
 class purchased {
-  private string $hostName , $username, $password, $database ;
+  private Database $database ;
+
   function __construct() {
-    $this->hostName = 'localhost' ;
-    $this->username = 'root';
-    $this->password = '';
-    $this->database = 'csc350';
+    $this->database = new Database() ;
   }
   // import from Cart Class itemQuantity function and total price (item price * quantity of item) Function
 //

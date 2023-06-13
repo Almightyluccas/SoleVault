@@ -18,11 +18,9 @@ class Database {
 
   private function connectToDatabase(): mysqli {
     $conn = new mysqli($this->servername, $this->username, $this->password, $this->databaseName);
-
     if ($conn->connect_error) {
       throw new mysqli_sql_exception($conn->error);
     }
-
     return $conn;
   }
 
