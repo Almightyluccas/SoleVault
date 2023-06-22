@@ -1,7 +1,7 @@
 <?php
 
 require_once '../app/core/Autoloader.php';
-require_once '../app/core/Router.php' ;
+require_once '../app/core/Router.php';
 
 use app\core\Autoloader;
 use app\core\Router;

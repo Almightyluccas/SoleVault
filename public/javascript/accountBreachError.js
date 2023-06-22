@@ -34,3 +34,5 @@ document.addEventListener('DOMContentLoaded', function() {
   const modalInstance = new bootstrap.Modal(modal);
   modalInstance.show();
 });
+
+let test = 0 ;
