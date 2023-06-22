@@ -55,7 +55,7 @@ class Router {
     $errorController->show404Error();
   }
 
-  public static function redirect( ?array $params = [], ?string $url = 'index.php'): void {
+  public static function redirect( ?array $params = [], ?string $url = 'https://rocky-thicket-83179-af4910e62a75.herokuapp.com/'): void {
     if (!empty($params)) {
       $queryString = http_build_query($params);
       $url .= '?' . $queryString;
