@@ -55,7 +55,7 @@ class Router {
     $errorController->show404Error();
   }
 
-  public static function redirect(?array $params = [], ?string $url = 'https://boiling-spire-92463-d02db77c9c65.herokuapp.com/'): void {
+  public static function redirect(?array $params = [], ?string $url = 'https://boiling-spire-92463-d02db77c9c65.herokuapp.com'): void {
     if (!empty($params)) {
       $queryString = http_build_query($params);
       $url .= '?' . $queryString;
