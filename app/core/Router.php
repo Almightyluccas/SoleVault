@@ -31,10 +31,12 @@ class Router {
   ];
 
   public function handleUserRequest(): void {
-    $choice = LibraryLG::getValue('choice');
+    $requestUri = $_SERVER['REQUEST_URI'];
+    $requestMethod = $_SERVER['REQUEST_METHOD'];
 
-    if (isset($this->routes[$choice])) {
-      $route = $this->routes[$choice];
+    $route = $this->findRoute($requestUri, $requestMethod);
+
+    if ($route !== null) {
       $controllerClass = $route[0];
       $method = $route[1];
       $arguments = $route[2] ?? [];
@@ -50,6 +52,16 @@ class Router {
     }
   }
 
+  private function findRoute(string $requestUri, string $requestMethod): ?array {
+    foreach ($this->routes as $route => $handler) {
+      if ($route === $requestUri) {
+        return $handler;
+      }
+    }
+
+    return null;
+  }
+
   private function handleInvalidRoute(): void {
     $errorController = new ErrorController();
     $errorController->show404Error();
@@ -57,7 +69,6 @@ class Router {
 
   public static function redirect(?array $params = [], ?string $url = null): void {
     if (empty($url)) {
-      // Generate the URL based on the current host dynamically
       $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
       $host = $_SERVER['HTTP_HOST'];
       $url = $protocol . $host;
@@ -70,15 +81,5 @@ class Router {
 
     header("Location: $url");
     exit;
-  }
-
-  public function addRoute(string $routeName, string $controllerClass, string $method, ?bool $hasParams = false): void {
-    $this->routes[$routeName] = [$controllerClass, $method, $hasParams];
-  }
-
-  public function removeRoute(string $route): void {
-    if (isset($this->routes[$route])) {
-      unset($this->routes[$route]);
-    }
   }
 }
