@@ -44,10 +44,6 @@ To run this project locally, follow these steps:
 
 Contributions are welcome! If you have any suggestions, bug reports, or feature requests, please open an issue on the GitHub repository. But this is only meant for me to learn PHP
 
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE.md) file for more information.
-
 ## Contact
 
 If you have any questions or need assistance, feel free to contact me at [luccasgraterol1984outlook.com](mailto:luccasgraterol1984outlook.com).
